@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Five</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #0B1A3D 0%, #1a2f5a 100%);
+  color: white;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Animated background elements */
+body::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(42, 157, 143, 0.1) 0%, transparent 70%);
+  animation: pulse 15s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 0.5; }
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  padding: 24px;
+  height: 100vh;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.screen.active {
+  display: flex;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+.header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  flex-grow: 1;
+  margin-bottom: 100px;
+  align-content: start;
+}
+
+/* Cards */
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 20px;
+  padding: 32px 16px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card:active {
+  transform: scale(0.95);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.card.red { background: linear-gradient(135deg, #E63946 0%, #d62839 100%); color: white; }
+.card.green { background: linear-gradient(135deg, #2A9D8F 0%, #238276 100%); color: white; }
+.card.yellow { background: linear-gradient(135deg, #F4A261 0%, #e89350 100%); color: #1a1a1a; }
+.card.orange { background: linear-gradient(135deg, #F77F00 0%, #e67300 100%); color: white; }
+.card.blue { background: linear-gradient(135deg, #457B9D 0%, #3a6a87 100%); color: white; }
+
+/* Buttons */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 32px 0;
+  padding-bottom: 100px;
+}
+
+button {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 18px 24px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.btn-red { 
+  background: linear-gradient(135deg, #E63946 0%, #d62839 100%); 
+  color: white; 
+}
+
+.btn-green { 
+  background: linear-gradient(135deg, #2A9D8F 0%, #238276 100%); 
+  color: white; 
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* Fixed buttons */
+.fixed-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  z-index: 100;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 96px;
+  left: 24px;
+  right: 24px;
+  z-index: 99;
+}
+
+/* Warning message */
+.warning {
+  color: #F4A261;
+  text-align: center;
+  font-size: 15px;
+  padding: 16px;
+  background: rgba(244, 162, 97, 0.1);
+  border-radius: 12px;
+  border-left: 4px solid #F4A261;
+  margin: 16px 0;
+}
+
+/* Steps */
+.step-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 120px;
+}
+
+.step-number {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2A9D8F;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.step-text {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+  margin-bottom: 24px;
+  max-width: 90%;
+}
+
+.step-description {
+  font-size: 16px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 85%;
+  line-height: 1.5;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  margin: 24px 0;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #2A9D8F 0%, #4ECDC4 100%);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(42, 157, 143, 0.5);
+}
+
+/* Back button */
+.back-btn {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Emergency type badge */
+.emergency-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(230, 57, 70, 0.2);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #E63946;
+  margin-bottom: 16px;
+}
+
+/* CPR Visual Guide */
+.cpr-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 140px;
+  overflow-y: auto;
+}
+
+#cpr-diagram {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 24px;
+}
+
+.pulsing-hands {
+  animation: pulse-hands 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-hands {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.7; transform: translateY(-3px); }
+}
+
+.chest-highlight {
+  animation: highlight-pulse 2s ease-in-out infinite;
+}
+
+@keyframes highlight-pulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+}
+
+.depth-indicator {
+  animation: depth-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes depth-pulse {
+  0%, 100% { height: 24px; }
+  50% { height: 10px; }
+}
+
+.cpr-instructions {
+  width: 100%;
+  max-width: 350px;
+  margin-bottom: 24px;
+}
+
+.instruction-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border-left: 3px solid #2A9D8F;
+}
+
+.instruction-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #2A9D8F;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.instruction-text {
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.cpr-metronome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(42, 157, 143, 0.1);
+  border-radius: 16px;
+  border: 2px solid rgba(42, 157, 143, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.cpr-metronome:hover {
+  background: rgba(42, 157, 143, 0.2);
+  border-color: rgba(42, 157, 143, 0.5);
+}
+
+.metronome-circle {
+  width: 60px;
+  height: 60px;
+  background: #2A9D8F;
+  border-radius: 50%;
+  margin-bottom: 12px;
+  transition: transform 0.1s ease;
+}
+
+.cpr-metronome.active .metronome-circle {
+  animation: beat 0.6s ease-in-out infinite;
+}
+
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.metronome-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.voice-control-btn {
+  position: fixed;
+  bottom: 180px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F4A261 0%, #e89350 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba(244, 162, 97, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.2s ease;
+  z-index: 98;
+}
+
+.voice-control-btn:active {
+  transform: scale(0.9);
+}
+
+.voice-control-btn.speaking {
+  animation: voice-pulse 1s ease-in-out infinite;
+}
+
+@keyframes voice-pulse {
+  0%, 100% { 
+    box-shadow: 0 4px 12px rgba(244, 162, 97, 0.4);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 4px 24px rgba(244, 162, 97, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+/* Camera Guide Styles */
+#screen-camera {
+  padding: 0;
+}
+
+#screen-camera .back-btn {
+  z-index: 1000;
+}
+
+.camera-overlay-top {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  text-align: center;
+}
+
+#camera-status {
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 8px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(42, 157, 143, 0.5);
+  max-width: 90%;
+}
+
+#output_canvas {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+}
+
+.camera-controls {
+  position: fixed;
+  bottom: 100px;
+  left: 24px;
+  right: 24px;
+  z-index: 999;
+  display: flex;
+  gap: 12px;
+}
+
+.camera-controls button {
+  flex: 1;
+}
+
+/* Custom Modal Dialog */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1a2f5a 0%, #0B1A3D 100%);
+  border-radius: 20px;
+  padding: 32px 24px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(42, 157, 143, 0.3);
+  text-align: center;
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: white;
+}
+
+.modal-message {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 24px;
+  white-space: pre-line;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.modal-buttons button {
+  width: 100%;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Screen 1: Emergency Selection -->
+  <div class="screen active" id="screen-home">
+    <div class="header">
+      <div class="logo">🚑</div>
+      <h1>What's happening?</h1>
+      <p class="subtitle">Select the emergency type</p>
+    </div>
+    <div class="grid">
+      <div class="card red" onclick="selectEmergency('Bleeding')">
+        <div class="card-icon">🩸</div>
+        <span>Bleeding</span>
+      </div>
+      <div class="card yellow" onclick="selectEmergency('Burns')">
+        <div class="card-icon">🔥</div>
+        <span>Burns</span>
+      </div>
+      <div class="card orange" onclick="selectEmergency('Choking')">
+        <div class="card-icon">😮</div>
+        <span>Choking</span>
+      </div>
+      <div class="card blue" onclick="selectEmergency('Unconscious')">
+        <div class="card-icon">😵</div>
+        <span>Unconscious</span>
+      </div>
+      <div class="card red" onclick="selectEmergency('Chest Pain')">
+        <div class="card-icon">💔</div>
+        <span>Chest Pain</span>
+      </div>
+      <div class="card orange" onclick="selectEmergency('Snake Bite')">
+        <div class="card-icon">🐍</div>
+        <span>Snake Bite</span>
+      </div>
+    </div>
+    <button class="btn-green floating-btn" onclick="callDoctor()">📞 Talk to a Doctor</button>
+    <button class="btn-red fixed-btn" onclick="callEmergency()">🚨 Call Emergency Services</button>
+  </div>
+
+  <!-- Screen 2: Consciousness Check -->
+  <div class="screen" id="screen-conscious">
+    <button class="back-btn" onclick="goToScreen('screen-home')">← Back</button>
+    <div class="header">
+      <span class="emergency-badge" id="emergency-type">Emergency</span>
+      <h1>Is the person conscious and responsive?</h1>
+      <p class="subtitle">Check if they respond to voice or touch</p>
+    </div>
+    <div class="btn-group">
+      <button class="btn-green" onclick="goToScreen('screen-severity')">
+        ✓ Conscious & Responsive
+      </button>
+      <button class="btn-red" onclick="handleUnresponsive()">
+        ✗ Unresponsive / Fainted
+      </button>
+    </div>
+    <div class="warning">
+      ⚠️ If unresponsive, call emergency services immediately.
+    </div>
+    <button class="btn-red fixed-btn" onclick="callEmergency()">🚨 Call Emergency Services</button>
+  </div>
+
+  <!-- Screen 3: Severity Assessment -->
+  <div class="screen" id="screen-severity">
+    <button class="back-btn" onclick="goToScreen('screen-conscious')">← Back</button>
+    <div class="header">
+      <span class="emergency-badge" id="emergency-type-2">Emergency</span>
+      <h1>How severe is it?</h1>
+      <p class="subtitle">Assess the situation carefully</p>
+    </div>
+    <div class="grid">
+      <div class="card red" onclick="setSeverity('severe')">
+        <div class="card-icon">🚨</div>
+        <span>Severe</span>
+        <small style="font-size: 12px; margin-top: 8px; opacity: 0.9;">Life-threatening</small>
+      </div>
+      <div class="card yellow" onclick="setSeverity('moderate')">
+        <div class="card-icon">⚠️</div>
+        <span>Moderate</span>
+        <small style="font-size: 12px; margin-top: 8px; opacity: 0.9;">Can worsen</small>
+      </div>
+    </div>
+    <button class="btn-red fixed-btn" onclick="callEmergency()">🚨 Call Emergency Services</button>
+  </div>
+
+  <!-- Screen 4: First Aid Steps -->
+  <div class="screen" id="screen-firstaid">
+    <button class="back-btn" onclick="goToScreen('screen-severity')">← Back</button>
+    <div class="header">
+      <span class="emergency-badge" id="emergency-type-3">Emergency</span>
+      <h1>First Five Actions</h1>
+      <p class="subtitle">Follow these steps carefully</p>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress" id="progress-bar"></div>
+    </div>
+    
+    <div class="step-container">
+      <div class="step-number" id="step-number">Step 1 of 5</div>
+      <div class="step-text" id="step-text">Check for breathing</div>
+      <div class="step-description" id="step-description">Look, listen, and feel for normal breathing for up to 10 seconds</div>
+    </div>
+    
+    <button class="btn-green floating-btn" onclick="nextStep()" id="next-btn">
+      Next Step →
+    </button>
+    <button class="btn-red fixed-btn" onclick="callEmergency()">🚨 Call Emergency Services</button>
+  </div>
+
+  <!-- Screen 5: CPR Visual Guide -->
+  <div class="screen" id="screen-cpr">
+    <button class="back-btn" onclick="goToScreen('screen-firstaid')">← Back</button>
+    <div class="header">
+      <span class="emergency-badge">CPR Guide</span>
+      <h1>CPR Hand Placement</h1>
+      <p class="subtitle">Follow the visual guide</p>
+    </div>
+    
+    <div class="cpr-container">
+      <svg id="cpr-diagram" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body outline -->
+        <ellipse cx="150" cy="80" rx="45" ry="55" fill="#4a5f7f" opacity="0.3"/>
+        <rect x="105" y="130" width="90" height="180" rx="15" fill="#4a5f7f" opacity="0.3"/>
+        
+        <!-- Chest area highlight -->
+        <rect x="115" y="140" width="70" height="80" rx="10" fill="#2A9D8F" opacity="0.2" class="chest-highlight"/>
+        
+        <!-- Sternum line -->
+        <line x1="150" y1="145" x2="150" y2="215" stroke="#F4A261" stroke-width="3" stroke-dasharray="5,5"/>
+        
+        <!-- Hand placement indicators -->
+        <g id="hand-placement" class="pulsing-hands">
+          <!-- Lower hand -->
+          <rect x="120" y="170" width="60" height="40" rx="8" fill="#E63946" opacity="0.7"/>
+          <text x="150" y="195" text-anchor="middle" fill="white" font-size="14" font-weight="bold">HAND</text>
+          
+          <!-- Upper hand -->
+          <rect x="120" y="135" width="60" height="35" rx="8" fill="#E63946" opacity="0.5"/>
+          <text x="150" y="157" text-anchor="middle" fill="white" font-size="12" font-weight="bold">HAND</text>
+        </g>
+        
+        <!-- Annotations -->
+        <circle cx="150" cy="155" r="3" fill="#F4A261"/>
+        <text x="160" y="158" fill="#F4A261" font-size="11">← Center of chest</text>
+        
+        <!-- Compression depth indicator -->
+        <g transform="translate(220, 180)">
+          <rect x="0" y="0" width="15" height="60" fill="rgba(255,255,255,0.1)" rx="3"/>
+          <rect x="0" y="36" width="15" height="24" fill="#2A9D8F" rx="3" class="depth-indicator"/>
+          <text x="20" y="50" fill="white" font-size="10">5-6cm</text>
+          <text x="20" y="62" fill="rgba(255,255,255,0.7)" font-size="9">depth</text>
+        </g>
+      </svg>
+      
+      <div class="cpr-instructions">
+        <div class="instruction-item">
+          <span class="instruction-number">1</span>
+          <span class="instruction-text">Place heel of hand on center of chest</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-number">2</span>
+          <span class="instruction-text">Place other hand on top, interlock fingers</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-number">3</span>
+          <span class="instruction-text">Push hard and fast: 100-120 compressions/min</span>
+        </div>
+        <div class="instruction-item">
+          <span class="instruction-number">4</span>
+          <span class="instruction-text">Compress 5-6 cm (2-2.4 inches) deep</span>
+        </div>
+      </div>
+      
+      <div class="cpr-metronome" id="cpr-metronome">
+        <div class="metronome-circle"></div>
+        <div class="metronome-text">Tap to start rhythm guide</div>
+      </div>
+    </div>
+    
+    <button class="btn-outline" style="margin-bottom: 16px;" onclick="startCameraGuide()">
+      📹 Use Camera for Live Guidance
+    </button>
+    <button class="btn-green floating-btn" onclick="startCPRGuide()">
+      🎵 Start CPR Rhythm & Voice Guide
+    </button>
+    <button class="btn-red fixed-btn" onclick="callEmergency()">🚨 Call Emergency Services</button>
+  </div>
+
+  <!-- Screen 6: Live Camera CPR Guide -->
+  <div class="screen" id="screen-camera">
+    <button class="back-btn" onclick="stopCamera()">← Back</button>
+    <div class="camera-overlay-top">
+      <span class="emergency-badge">Live CPR Guide</span>
+      <div id="camera-status">Initializing camera...</div>
+    </div>
+    
+    <video id="video_input" style="display: none;"></video>
+    <canvas id="output_canvas"></canvas>
+    
+    <div class="camera-controls">
+      <button class="btn-green" onclick="toggleCPRMetronomeCamera()" id="camera-metronome-btn">
+        🎵 Start Rhythm Guide
+      </button>
+    </div>
+    
+    <button class="btn-red fixed-btn" onclick="callEmergency()">🚨 Call Emergency Services</button>
+  </div>
+
+</div>
+
+<!-- Custom Modal Dialog -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-icon" id="modal-icon">ℹ️</div>
+    <div class="modal-title" id="modal-title">Information</div>
+    <div class="modal-message" id="modal-message">Message</div>
+    <div class="modal-buttons" id="modal-buttons">
+      <button class="btn-green" onclick="closeModal()">OK</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils"></script>
+<script>
+let currentEmergency = '';
+let currentSeverity = '';
+let currentStep = 0;
+let voiceEnabled = false;
+let cprMetronomeActive = false;
+let metronomeInterval = null;
+let speechSynthesis = window.speechSynthesis;
+
+// Camera variables
+let camera = null;
+let pose = null;
+let videoElement = null;
+let canvasElement = null;
+let canvasCtx = null;
+let cameraMetronomeActive = false;
+let cameraMetronomeInterval = null;
+
+// Modal functions
+function showModal(title, message, icon = 'ℹ️', buttons = null) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-message').textContent = message;
+  document.getElementById('modal-icon').textContent = icon;
+  
+  const modalButtons = document.getElementById('modal-buttons');
+  if (buttons) {
+    modalButtons.innerHTML = '';
+    buttons.forEach(btn => {
+      const button = document.createElement('button');
+      button.className = btn.class || 'btn-green';
+      button.textContent = btn.text;
+      button.onclick = btn.onclick;
+      modalButtons.appendChild(button);
+    });
+  } else {
+    modalButtons.innerHTML = '<button class="btn-green" onclick="closeModal()">OK</button>';
+  }
+  
+  document.getElementById('modal-overlay').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+}
+
+function showConfirm(title, message, onConfirm, onCancel) {
+  showModal(title, message, '⚠️', [
+    {
+      text: 'Yes',
+      class: 'btn-red',
+      onclick: () => {
+        closeModal();
+        if (onConfirm) onConfirm();
+      }
+    },
+    {
+      text: 'Cancel',
+      class: 'btn-outline',
+      onclick: () => {
+        closeModal();
+        if (onCancel) onCancel();
+      }
+    }
+  ]);
+}
+
+// First aid steps database with voice instructions
+const firstAidSteps = {
+  'Bleeding': [
+    { text: 'Apply direct pressure', description: 'Use a clean cloth or bandage and press firmly on the wound', voice: 'Apply direct pressure to the wound using a clean cloth. Press firmly and do not remove it.' },
+    { text: 'Keep pressure constant', description: 'Do not remove the cloth. Add more layers if blood soaks through', voice: 'Keep constant pressure. If blood soaks through, add more layers on top without removing the first cloth.' },
+    { text: 'Elevate the injury', description: 'Raise the injured area above heart level if possible', voice: 'Elevate the injured area above the heart level if possible. This helps reduce blood flow to the wound.' },
+    { text: 'Apply bandage', description: 'Wrap firmly but not too tight to cut off circulation', voice: 'Apply a bandage. Wrap it firmly but not too tight. You should be able to slip a finger underneath.' },
+    { text: 'Monitor for shock', description: 'Keep the person warm and lying down. Call for help if bleeding doesn\'t stop', voice: 'Monitor the person for signs of shock. Keep them warm and lying down. If bleeding continues, call emergency services immediately.' }
+  ],
+  'Burns': [
+    { text: 'Remove from heat source', description: 'Ensure the person is away from fire, electricity, or chemicals', voice: 'First, remove the person from the heat source. Make sure they are safe from fire, electricity, or chemicals.' },
+    { text: 'Cool the burn', description: 'Run cool (not cold) water over the burn for 10-20 minutes', voice: 'Cool the burn with running water. Use cool water, not ice cold. Continue for at least 10 to 20 minutes.' },
+    { text: 'Remove jewelry/clothing', description: 'Carefully remove items before swelling occurs. Don\'t remove stuck fabric', voice: 'Carefully remove any jewelry or loose clothing near the burn before swelling starts. Do not remove anything that is stuck to the skin.' },
+    { text: 'Cover with sterile bandage', description: 'Use a clean, non-stick bandage. Don\'t apply ice or ointments', voice: 'Cover the burn with a clean, non-stick bandage or cloth. Do not apply ice, butter, or ointments.' },
+    { text: 'Manage pain', description: 'Keep the person comfortable. Seek medical help for severe burns', voice: 'Keep the person comfortable and calm. For severe burns, seek immediate medical attention.' }
+  ],
+  'Choking': [
+    { text: 'Encourage coughing', description: 'If they can cough, encourage them to keep coughing', voice: 'If the person can cough or speak, encourage them to keep coughing. This is the most effective way to clear the obstruction.' },
+    { text: 'Perform back blows', description: 'Bend them forward and give 5 sharp blows between shoulder blades', voice: 'Bend the person forward and give 5 sharp blows between the shoulder blades with the heel of your hand.' },
+    { text: 'Perform abdominal thrusts', description: 'Stand behind them, make a fist above navel, and thrust inward and upward', voice: 'Stand behind the person. Make a fist just above their navel. Grasp it with your other hand and thrust inward and upward sharply.' },
+    { text: 'Alternate techniques', description: 'Repeat 5 back blows and 5 abdominal thrusts until object is cleared', voice: 'Alternate between 5 back blows and 5 abdominal thrusts. Continue until the object is expelled or help arrives.' },
+    { text: 'Call for help', description: 'If obstruction doesn\'t clear, call emergency services immediately', voice: 'If the obstruction does not clear after several attempts, call emergency services immediately while continuing the procedure.' }
+  ],
+  'Unconscious': [
+    { text: 'Check responsiveness', description: 'Tap shoulders and shout. Check if they respond to voice or touch', voice: 'Check if the person is responsive. Tap their shoulders firmly and shout. Check for any response to voice or touch.', cpr: true },
+    { text: 'Call emergency services', description: 'Get someone to call immediately while you continue assessment', voice: 'Call emergency services immediately. If someone else is present, have them call while you continue assessment.', cpr: true },
+    { text: 'Check breathing', description: 'Look for chest movement. Listen and feel for breath for 10 seconds', voice: 'Check for breathing. Look at the chest for movement. Listen and feel for breath. Do this for 10 seconds.', cpr: true },
+    { text: 'Recovery position', description: 'If breathing, place on their side. Support head and monitor breathing', voice: 'If the person is breathing, place them in the recovery position on their side. Support their head and continue monitoring.' },
+    { text: 'Start CPR if needed', description: 'If not breathing, begin chest compressions at 100-120 per minute', voice: 'If the person is not breathing, you must start CPR immediately. I will guide you through the process.', cpr: true }
+  ],
+  'Chest Pain': [
+    { text: 'Call emergency services', description: 'Heart attack requires immediate medical attention', voice: 'Call emergency services immediately. Chest pain could indicate a heart attack which requires urgent medical care.' },
+    { text: 'Help them sit down', description: 'Have them sit in a comfortable position, preferably upright', voice: 'Help the person sit down in a comfortable position. Keep them upright as this helps with breathing.' },
+    { text: 'Loosen tight clothing', description: 'Ensure they can breathe easily', voice: 'Loosen any tight clothing around the neck, chest, and waist to ensure they can breathe easily.' },
+    { text: 'Give aspirin if available', description: 'If not allergic, give 300mg aspirin to chew slowly', voice: 'If the person is not allergic and has no contraindications, give them 300 milligrams of aspirin to chew slowly.' },
+    { text: 'Monitor vital signs', description: 'Stay with them. Be ready to perform CPR if they become unconscious', voice: 'Stay with the person and monitor their condition. If they become unconscious, be prepared to start CPR.' }
+  ],
+  'Snake Bite': [
+    { text: 'Stay calm and still', description: 'Keep the person calm and limit movement to slow venom spread', voice: 'Keep the person calm and still. Limiting movement helps slow the spread of venom through the body.' },
+    { text: 'Remove jewelry', description: 'Take off rings, watches before swelling occurs', voice: 'Remove any jewelry, watches, or tight clothing near the bite before swelling begins.' },
+    { text: 'Position correctly', description: 'Keep bitten area at or below heart level', voice: 'Position the bitten area at or below heart level. This helps slow venom circulation.' },
+    { text: 'Clean wound gently', description: 'Wash with soap and water. Cover with clean dressing', voice: 'Gently clean the wound with soap and water. Cover it with a clean, sterile dressing.' },
+    { text: 'Get medical help', description: 'Call emergency services. Try to remember snake appearance for identification', voice: 'Call emergency services immediately. Try to remember what the snake looked like for identification, but do not attempt to catch it.' }
+  ]
+};
+
+function goToScreen(screenId) {
+  // Stop any ongoing voice
+  stopVoice();
+  
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  setTimeout(() => {
+    document.getElementById(screenId).classList.add('active');
+  }, 50);
+}
+
+function selectEmergency(type) {
+  currentEmergency = type;
+  document.querySelectorAll('.emergency-badge').forEach(badge => {
+    badge.textContent = type;
+  });
+  goToScreen('screen-conscious');
+}
+
+function setSeverity(severity) {
+  currentSeverity = severity;
+  currentStep = 0;
+  loadStep();
+  goToScreen('screen-firstaid');
+}
+
+function handleUnresponsive() {
+  showConfirm(
+    '🚨 Critical Emergency',
+    'This is a critical emergency. Call emergency services immediately. Do you want to call now?',
+    () => callEmergency()
+  );
+  currentSeverity = 'severe';
+  currentStep = 0;
+  loadStep();
+  goToScreen('screen-firstaid');
+}
+
+function speak(text) {
+  if (!voiceEnabled) return;
+  
+  // Cancel any ongoing speech
+  speechSynthesis.cancel();
+  
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+  
+  // Add visual feedback
+  const voiceBtn = document.querySelector('.voice-control-btn');
+  if (voiceBtn) {
+    voiceBtn.classList.add('speaking');
+    utterance.onend = () => {
+      voiceBtn.classList.remove('speaking');
+    };
+  }
+  
+  speechSynthesis.speak(utterance);
+}
+
+function stopVoice() {
+  speechSynthesis.cancel();
+  const voiceBtn = document.querySelector('.voice-control-btn');
+  if (voiceBtn) {
+    voiceBtn.classList.remove('speaking');
+  }
+}
+
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  const voiceBtn = document.querySelector('.voice-control-btn');
+  
+  if (voiceEnabled) {
+    voiceBtn.innerHTML = '🔊';
+    speak('Voice assistance enabled. I will guide you through each step.');
+    setTimeout(() => {
+      const steps = firstAidSteps[currentEmergency] || [];
+      if (steps[currentStep]) {
+        speak(steps[currentStep].voice || steps[currentStep].description);
+      }
+    }, 2000);
+  } else {
+    voiceBtn.innerHTML = '🔇';
+    stopVoice();
+  }
+}
+
+function loadStep() {
+  const steps = firstAidSteps[currentEmergency] || [
+    { text: 'Check for breathing', description: 'Look, listen, and feel for normal breathing', voice: 'Check for breathing. Look, listen, and feel for normal breathing for up to 10 seconds.' },
+    { text: 'Call emergency services', description: 'Get professional help on the way', voice: 'Call emergency services immediately to get professional help on the way.' },
+    { text: 'Keep person comfortable', description: 'Reassure and monitor until help arrives', voice: 'Keep the person comfortable. Reassure them and monitor their condition until help arrives.' },
+    { text: 'Monitor vital signs', description: 'Check breathing and consciousness regularly', voice: 'Monitor vital signs. Check breathing and consciousness regularly.' },
+    { text: 'Stay with the person', description: 'Don\'t leave them alone until help arrives', voice: 'Stay with the person. Do not leave them alone until professional help arrives.' }
+  ];
+  
+  const step = steps[currentStep];
+  const progress = ((currentStep + 1) / steps.length) * 100;
+  
+  document.getElementById('step-number').textContent = `Step ${currentStep + 1} of ${steps.length}`;
+  document.getElementById('step-text').textContent = step.text;
+  document.getElementById('step-description').textContent = step.description;
+  document.getElementById('progress-bar').style.width = progress + '%';
+  
+  if (voiceEnabled && step.voice) {
+    setTimeout(() => speak(step.voice), 500);
+  }
+  
+  const nextBtn = document.getElementById('next-btn');
+  if (currentStep === steps.length - 1) {
+    nextBtn.textContent = '✓ Complete';
+    nextBtn.onclick = completeFirstAid;
+  } else {
+    nextBtn.textContent = 'Next Step →';
+    nextBtn.onclick = nextStep;
+  }
+  
+  addVoiceControlButton();
+  
+  if (step.cpr && currentEmergency === 'Unconscious' && currentStep >= 2) {
+    const existingCprBtn = document.getElementById('cpr-guide-btn');
+    const existingCameraBtn = document.getElementById('cpr-camera-btn');
+    if (existingCprBtn) existingCprBtn.remove();
+    if (existingCameraBtn) existingCameraBtn.remove();
+    
+    const cprBtnContainer = document.createElement('div');
+    cprBtnContainer.style.cssText = 'display: flex; flex-direction: column; gap: 12px; margin-top: 24px; width: 100%;';
+    
+    const cameraBtn = document.createElement('button');
+    cameraBtn.id = 'cpr-camera-btn';
+    cameraBtn.className = 'btn-green';
+    cameraBtn.style.cssText = 'background: linear-gradient(135deg, #9D4EDD 0%, #7B2CBF 100%); font-weight: 600;';
+    cameraBtn.innerHTML = '📷 Turn on CPR Camera Assist';
+    cameraBtn.onclick = () => startCameraGuide();
+    
+    const cprBtn = document.createElement('button');
+    cprBtn.id = 'cpr-guide-btn';
+    cprBtn.className = 'btn-outline';
+    cprBtn.textContent = '📋 Show CPR Visual Guide';
+    cprBtn.onclick = () => goToScreen('screen-cpr');
+    
+    cprBtnContainer.appendChild(cameraBtn);
+    cprBtnContainer.appendChild(cprBtn);
+    document.querySelector('#screen-firstaid .step-container').appendChild(cprBtnContainer);
+  }
+}
+
+function addVoiceControlButton() {
+  if (!document.querySelector('.voice-control-btn')) {
+    const voiceBtn = document.createElement('button');
+    voiceBtn.className = 'voice-control-btn';
+    voiceBtn.innerHTML = voiceEnabled ? '🔊' : '🔇';
+    voiceBtn.title = 'Toggle voice assistance';
+    voiceBtn.onclick = toggleVoice;
+    document.getElementById('screen-firstaid').appendChild(voiceBtn);
+  }
+}
+
+function nextStep() {
+  const steps = firstAidSteps[currentEmergency] || [];
+  if (currentStep < steps.length - 1) {
+    currentStep++;
+    loadStep();
+  }
+}
+
+function completeFirstAid() {
+  if (voiceEnabled) {
+    speak('First aid steps completed. Continue to monitor the person and wait for professional medical help.');
+  }
+  setTimeout(() => {
+    showModal(
+      '✅ Steps Completed',
+      'First aid steps completed!\n\nContinue to monitor the person and wait for professional medical help if needed.',
+      '✅'
+    );
+    setTimeout(() => {
+      goToScreen('screen-home');
+      currentStep = 0;
+      currentEmergency = '';
+      currentSeverity = '';
+    }, 2000);
+  }, voiceEnabled ? 3000 : 0);
+}
+
+function callEmergency() {
+  showConfirm(
+    '📞 Call Emergency Services',
+    'This will call emergency services (911/112/999).\n\nIn a real emergency, this would dial your local emergency number.\n\nContinue?',
+    () => {
+      showModal(
+        '📞 Calling...',
+        'Emergency services are being contacted.\n\nStay on the line and follow their instructions.',
+        '🚨'
+      );
+    }
+  );
+}
+
+function callDoctor() {
+  showModal(
+    '📞 Video Consultation',
+    'Starting video consultation with a doctor...\n\nThis feature would connect you with a medical professional for immediate guidance.',
+    '👨‍⚕️'
+  );
+}
+
+// Camera CPR Guide Functions
+function startCameraGuide() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showModal(
+      '❌ Camera Not Supported',
+      'Your browser does not support camera access.\n\nPlease use a modern browser like Chrome, Firefox, or Safari.\n\nYou can use the CPR Visual Guide instead.',
+      '❌'
+    );
+    return;
+  }
+  
+  goToScreen('screen-camera');
+  
+  navigator.mediaDevices.getUserMedia({ 
+    video: { 
+      facingMode: 'environment',
+      width: { ideal: 1280 },
+      height: { ideal: 720 }
+    } 
+  })
+    .then(() => {
+      setTimeout(initializeCamera, 300);
+    })
+    .catch(err => {
+      console.error('Camera error:', err);
+      
+      let errorTitle = '❌ Camera Access Error';
+      let errorMessage = '';
+      
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        errorTitle = '📷 Camera Permission Needed';
+        errorMessage = 'Camera permission was denied.\n\n';
+        errorMessage += 'To use CPR Camera Assist:\n';
+        errorMessage += '1. Click the camera icon (🔒) in your browser address bar\n';
+        errorMessage += '2. Allow camera access\n';
+        errorMessage += '3. Refresh the page and try again\n\n';
+        errorMessage += 'Or use the CPR Visual Guide instead.';
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        errorMessage = 'No camera found on this device.\n\n';
+        errorMessage += 'Please use the CPR Visual Guide instead.';
+      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+        errorMessage = 'Camera is already in use by another app.\n\n';
+        errorMessage += 'Please close other apps using the camera and try again.';
+      } else {
+        errorMessage = 'Could not access camera: ' + err.message + '\n\n';
+        errorMessage += 'Please check your camera settings and try again.';
+      }
+      
+      showModal(errorTitle, errorMessage, '⚠️', [
+        {
+          text: 'Try Again',
+          class: 'btn-green',
+          onclick: () => {
+            closeModal();
+            setTimeout(() => startCameraGuide(), 300);
+          }
+        },
+        {
+          text: 'Use Visual Guide',
+          class: 'btn-outline',
+          onclick: () => {
+            closeModal();
+            goToScreen('screen-cpr');
+          }
+        }
+      ]);
+    });
+}
+
+function initializeCamera() {
+  videoElement = document.getElementById('video_input');
+  canvasElement = document.getElementById('output_canvas');
+  canvasCtx = canvasElement.getContext('2d');
+  
+  canvasElement.width = window.innerWidth;
+  canvasElement.height = window.innerHeight;
+  
+  if (typeof Pose === 'undefined') {
+    showModal(
+      '❌ Library Error',
+      'Required libraries are still loading.\n\nPlease wait a moment and try again.',
+      '⏳'
+    );
+    setTimeout(() => goToScreen('screen-cpr'), 2000);
+    return;
+  }
+  
+  pose = new Pose({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+  });
+  
+  pose.setOptions({
+    modelComplexity: 1,
+    smoothLandmarks: true,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
+  });
+  
+  pose.onResults(onPoseResults);
+  
+  if (typeof Camera === 'undefined') {
+    showModal(
+      '❌ Camera Library Error',
+      'Camera library failed to load.\n\nPlease refresh the page and try again.',
+      '🔄'
+    );
+    setTimeout(() => goToScreen('screen-cpr'), 2000);
+    return;
+  }
+  
+  camera = new Camera(videoElement, {
+    onFrame: async () => {
+      await pose.send({image: videoElement});
+    },
+    width: 1280,
+    height: 720,
+    facingMode: 'environment'
+  });
+  
+  camera.start().catch(err => {
+    console.error('Failed to start camera:', err);
+    showModal(
+      '❌ Camera Start Failed',
+      'Failed to start camera.\n\nPlease check permissions and try again.',
+      '📷'
+    );
+    setTimeout(() => goToScreen('screen-cpr'), 2000);
+  });
+  
+  if (voiceEnabled) {
+    speak('Camera activated. Position the camera to see the patient lying on their back. Make sure you can see both shoulders.');
+  } else {
+    voiceEnabled = true;
+    setTimeout(() => {
+      speak('Camera activated. Position the camera to see the patient lying on their back. Make sure you can see both shoulders.');
+    }, 1000);
+  }
+}
+
+function onPoseResults(results) {
+  canvasCtx.save();
+  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+  canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+  
+  const statusElement = document.getElementById('camera-status');
+  
+  if (results.poseLandmarks) {
+    const leftShoulder = results.poseLandmarks[11];
+    const rightShoulder = results.poseLandmarks[12];
+    const leftHip = results.poseLandmarks[23];
+    const rightHip = results.poseLandmarks[24];
+    
+    const chestX = (leftShoulder.x + rightShoulder.x) / 2 * canvasElement.width;
+    const chestY = (leftShoulder.y + rightShoulder.y) / 2 * canvasElement.height + (canvasElement.height * 0.08);
+    
+    const shoulderDistance = Math.abs(leftShoulder.x - rightShoulder.x) * canvasElement.width;
+    const isLyingDown = shoulderDistance > canvasElement.width * 0.15;
+    
+    canvasCtx.strokeStyle = 'rgba(42, 157, 143, 0.3)';
+    canvasCtx.lineWidth = 2;
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(leftShoulder.x * canvasElement.width, leftShoulder.y * canvasElement.height);
+    canvasCtx.lineTo(leftHip.x * canvasElement.width, leftHip.y * canvasElement.height);
+    canvasCtx.moveTo(rightShoulder.x * canvasElement.width, rightShoulder.y * canvasElement.height);
+    canvasCtx.lineTo(rightHip.x * canvasElement.width, rightHip.y * canvasElement.height);
+    canvasCtx.stroke();
+    
+    canvasCtx.beginPath();
+    canvasCtx.arc(chestX, chestY, 60, 0, 2 * Math.PI);
+    canvasCtx.lineWidth = 10;
+    canvasCtx.strokeStyle = '#E63946';
+    canvasCtx.stroke();
+    
+    canvasCtx.beginPath();
+    canvasCtx.arc(chestX, chestY, 70, 0, 2 * Math.PI);
+    canvasCtx.lineWidth = 3;
+    canvasCtx.strokeStyle = 'rgba(230, 57, 70, 0.4)';
+    canvasCtx.stroke();
+    
+    const pulseRadius = 35 + Math.sin(Date.now() / 300) * 8;
+    canvasCtx.beginPath();
+    canvasCtx.arc(chestX, chestY, pulseRadius, 0, 2 * Math.PI);
+    canvasCtx.fillStyle = 'rgba(230, 57, 70, 0.25)';
+    canvasCtx.fill();
+    
+    canvasCtx.beginPath();
+    canvasCtx.arc(chestX, chestY, 8, 0, 2 * Math.PI);
+    canvasCtx.fillStyle = '#F4A261';
+    canvasCtx.fill();
+    
+    canvasCtx.strokeStyle = '#F4A261';
+    canvasCtx.lineWidth = 4;
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(chestX - 30, chestY);
+    canvasCtx.lineTo(chestX + 30, chestY);
+    canvasCtx.moveTo(chestX, chestY - 30);
+    canvasCtx.lineTo(chestX, chestY + 30);
+    canvasCtx.stroke();
+    
+    canvasCtx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    canvasCtx.shadowBlur = 10;
+    canvasCtx.shadowOffsetX = 2;
+    canvasCtx.shadowOffsetY = 2;
+    
+    canvasCtx.fillStyle = "white";
+    canvasCtx.font = "bold 28px Arial";
+    canvasCtx.textAlign = "center";
+    canvasCtx.strokeStyle = "black";
+    canvasCtx.lineWidth = 4;
+    canvasCtx.strokeText("PRESS HERE", chestX, chestY + 95);
+    canvasCtx.fillText("PRESS HERE", chestX, chestY + 95);
+    
+    canvasCtx.shadowBlur = 5;
+    canvasCtx.font = "bold 18px Arial";
+    canvasCtx.strokeText("5-6 cm deep", chestX, chestY + 120);
+    canvasCtx.fillText("5-6 cm deep", chestX, chestY + 120);
+    
+    canvasCtx.shadowColor = 'transparent';
+    canvasCtx.shadowBlur = 0;
+    
+    canvasCtx.fillStyle = '#2A9D8F';
+    canvasCtx.beginPath();
+    canvasCtx.arc(leftShoulder.x * canvasElement.width, leftShoulder.y * canvasElement.height, 10, 0, 2 * Math.PI);
+    canvasCtx.fill();
+    canvasCtx.beginPath();
+    canvasCtx.arc(rightShoulder.x * canvasElement.width, rightShoulder.y * canvasElement.height, 10, 0, 2 * Math.PI);
+    canvasCtx.fill();
+    
+    if (isLyingDown) {
+      statusElement.innerText = "✓ Patient Detected - Target Locked - Position Correct";
+      statusElement.style.borderColor = 'rgba(42, 157, 143, 0.8)';
+      statusElement.style.background = 'rgba(0, 150, 0, 0.6)';
+    } else {
+      statusElement.innerText = "Patient Detected - Adjust Angle (Patient should be lying flat)";
+      statusElement.style.borderColor = 'rgba(244, 162, 97, 0.8)';
+      statusElement.style.background = 'rgba(244, 162, 97, 0.3)';
+    }
+  } else {
+    statusElement.innerText = "⚠ Locating Patient - Ensure patient is visible";
+    statusElement.style.borderColor = 'rgba(230, 57, 70, 0.5)';
+    statusElement.style.background = 'rgba(230, 57, 70, 0.3)';
+    
+    const centerX = canvasElement.width / 2;
+    const centerY = canvasElement.height / 2;
+    
+    canvasCtx.beginPath();
+    canvasCtx.arc(centerX, centerY, 100, 0, 2 * Math.PI);
+    canvasCtx.lineWidth = 3;
+    canvasCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    canvasCtx.setLineDash([10, 10]);
+    canvasCtx.stroke();
+    canvasCtx.setLineDash([]);
+    
+    canvasCtx.fillStyle = "rgba(255, 255, 255, 0.7)";
+    canvasCtx.font = "18px Arial";
+    canvasCtx.textAlign = "center";
+    canvasCtx.fillText("Position patient here", centerX, centerY);
+  }
+  
+  canvasCtx.restore();
+}
+
+function toggleCPRMetronomeCamera() {
+  cameraMetronomeActive = !cameraMetronomeActive;
+  const btn = document.getElementById('camera-metronome-btn');
+  
+  if (cameraMetronomeActive) {
+    btn.textContent = '⏸ Stop Rhythm';
+    btn.classList.remove('btn-green');
+    btn.classList.add('btn-red');
+    
+    if (voiceEnabled) {
+      speak('Starting CPR rhythm. Push hard and fast. 100 to 120 compressions per minute.');
+    }
+    
+    let count = 0;
+    cameraMetronomeInterval = setInterval(() => {
+      playBeep();
+      count++;
+      
+      if (count % 30 === 0 && voiceEnabled) {
+        speak('Keep going. Continue compressions.');
+      }
+    }, 550);
+    
+  } else {
+    btn.textContent = '🎵 Start Rhythm Guide';
+    btn.classList.remove('btn-red');
+    btn.classList.add('btn-green');
+    clearInterval(cameraMetronomeInterval);
+    stopVoice();
+  }
+}
+
+function stopCamera() {
+  if (camera) {
+    camera.stop();
+    camera = null;
+  }
+  if (pose) {
+    pose.close();
+    pose = null;
+  }
+  if (cameraMetronomeInterval) {
+    clearInterval(cameraMetronomeInterval);
+    cameraMetronomeActive = false;
+  }
+  
+  if (videoElement && videoElement.srcObject) {
+    videoElement.srcObject.getTracks().forEach(track => track.stop());
+  }
+  
+  goToScreen('screen-cpr');
+}
+
+function startCPRGuide() {
+  const metronome = document.getElementById('cpr-metronome');
+  cprMetronomeActive = !cprMetronomeActive;
+  
+  if (cprMetronomeActive) {
+    metronome.classList.add('active');
+    document.querySelector('.metronome-text').textContent = 'Push... Push... Push...';
+    
+    speak('Starting CPR rhythm guide. Push hard and fast. 100 to 120 compressions per minute. Push down 5 to 6 centimeters. Let the chest rise completely between compressions.');
+    
+    let count = 0;
+    metronomeInterval = setInterval(() => {
+      playBeep();
+      count++;
+      
+      if (count % 30 === 0) {
+        speak('Keep going. You are doing great. Continue compressions.');
+      }
+    }, 550);
+    
+  } else {
+    metronome.classList.remove('active');
+    document.querySelector('.metronome-text').textContent = 'Tap to start rhythm guide';
+    clearInterval(metronomeInterval);
+    stopVoice();
+  }
+}
+
+function playBeep() {
+  try {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  } catch (e) {
+    // Fallback: do nothing if AudioContext is not supported
+  }
+}
+
+window.addEventListener('resize', () => {
+  if (canvasElement) {
+    canvasElement.width = window.innerWidth;
+    canvasElement.height = window.innerHeight;
+  }
+});
+
+window.addEventListener('load', () => {
+  console.log('First Five Emergency App Loaded');
+  console.log('Camera permissions are required for CPR Camera Assist feature');
+});
+</script>
+</body>
+</html>
